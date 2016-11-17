@@ -6,7 +6,19 @@
 			"id": "start"
 		},
 		{
-			"id": "court"
+			"id": "court",
+			"onEntry": {
+				"action": "setField",
+				"parameters": ["court", "${context}"]
+			},
+			"onStay": {
+				"action": "setField",
+				"parameters": ["court", "${context}"]
+			},
+			"onExit": {
+				"action": "setField",
+				"parameters": ["court", "${context}"]
+			}
 		},
 		{
 			"id": "verdict"

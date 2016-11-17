@@ -1,6 +1,7 @@
 package com.linewx.parser;
 
 import com.google.gson.Gson;
+import com.linewx.parser.json.RuleJson;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -55,7 +56,7 @@ public class ParserTest {
         Gson gson = new Gson();
         BufferedReader bufferedReader =new BufferedReader(
                 new InputStreamReader(is));
-        Rule one = gson.fromJson(bufferedReader, Rule.class);
-        System.out.println(one.test);
+        RuleJson rule = gson.fromJson(bufferedReader, RuleJson.class);
+        System.out.println(rule.getStates());
     }
 }

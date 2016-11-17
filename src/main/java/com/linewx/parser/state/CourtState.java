@@ -1,52 +1,31 @@
 package com.linewx.parser.state;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
+import com.linewx.parser.ParseCondition;
+import com.linewx.parser.ParseContext;
 
 /**
  * Created by luganlin on 11/16/16.
  */
-public class CourtState implements ParseState{
-    private Map<String, ParseCondition> conditions = new LinkedHashMap<>();
+public class CourtState extends AbstractParseState implements ParseState{
 
-    CourtState() {
-        ParseCondition plaintiffCondition = new ParseCondition(
-            "法院$",
-            "^原告"
+    public CourtState() {
+        ParseCondition verdictTransformCondition = new ParseCondition(
+            ".*法院$",
+            ".*判 决 书$"
         );
-        conditions.put("plaintiff", plaintiffCondition);
-
+        conditions.put("verdict", verdictTransformCondition);
     }
 
     @Override
     public String getState() {
-        return "count";
-    }
-
-    @Override
-    public void onEntry(ParseContext context) {
-        //do something exit callback
+        return "court";
     }
 
     @Override
     public void onExit(ParseContext context) {
         //do something exit callback
+        context.setCourt(context.getPreStatement());
     }
 
-    @Override
-    public void onStay(ParseContext context) {
-        //do something say callback
-    }
-
-    @Override
-    public String transform(ParseContext context) {
-        for (Map.Entry<String, ParseCondition> condition : conditions.entrySet()) {
-            if (condition.getValue().match(context)) {
-                return condition.getKey();
-            }
-        }
-
-        return getState();
-    }
 }

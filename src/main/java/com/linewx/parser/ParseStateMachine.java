@@ -34,7 +34,7 @@ class ParseStateMachine {
 
     void parse(ParseContext context, List<String> content) {
        for (String statement: content) {
-           System.out.println(statement);
+           //System.out.println(statement);
            stepContext(context, statement);
            parse(context);
        }
@@ -68,7 +68,7 @@ class ParseStateMachine {
                     currentState.onExit(context);
                     context.clearTempContent();
                     context.setCurrentState(nextStateName);
-                    System.out.println(nextStateName);
+                    //System.out.println(nextStateName);
                     nextState.onEntry(context);
                 }
             }

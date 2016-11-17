@@ -20,20 +20,28 @@ public class ParserTest {
         Matcher matcher = pattern.matcher(content);
         boolean isMatched = matcher.matches();
         System.out.println("Is it a Match?" + isMatched);*/
-        File file = new File("C:\\Users\\lugan\\git\\law\\sourcefile\\test.html");
-        Document doc = Jsoup.parse(file, "GBK");
-        Element element = doc.getElementById("DivContent");
-        Elements elements = element.children();
-        List<String> statements = new ArrayList<>();
-        for(Element oneElement : elements) {
-            statements.add(oneElement.ownText());
+        long startTime = System.currentTimeMillis();
+        for (int i=0; i<1000; i++) {
+            File file = new File("C:\\Users\\lugan\\git\\law\\sourcefile\\test.html");
+            Document doc = Jsoup.parse(file, "GBK");
+            Element element = doc.getElementById("DivContent");
+            Elements elements = element.children();
+            List<String> statements = new ArrayList<>();
+            for(Element oneElement : elements) {
+                statements.add(oneElement.ownText());
+            }
+            ParseContext context = new ParseContext();
+            context.setCurrentState("start");
+            ParseStateMachine stateMachine = new ParseStateMachine();
+            stateMachine.parse(context,statements);
+            //System.out.println(context.getCurrentState());
+            //System.out.println(context.getCourt());
+            file.exists();
         }
-        ParseContext context = new ParseContext();
-        context.setCurrentState("start");
-        ParseStateMachine stateMachine = new ParseStateMachine();
-        stateMachine.parse(context,statements);
-        System.out.println(context.getCurrentState());
-        //System.out.println(context.getCourt());
-        file.exists();
+
+        long endTime = System.currentTimeMillis();
+        System.out.println(endTime - startTime);
+
+
     }
 }

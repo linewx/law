@@ -1,0 +1,60 @@
+{
+	"firstState": "start",
+
+	"states": [
+		{
+			"id": "start"
+		},
+		{
+			"id": "court"
+		},
+		{
+			"id": "verdict"
+		},
+		{
+			"id": "number"
+		},
+		{
+			"id": "accuser"
+		},
+		{
+			"id": "defendant"
+		},
+		{
+			"id": "content"
+		},
+		{
+			"id": "judge"
+		},
+		{
+			"id": "juror"
+		},
+		{
+			"id": "date"
+		},
+		{
+			"id": "clerk"
+		},
+		{
+			"id": "attached"
+		}
+	],
+	"transitions" : [
+		{
+			"source": "start",
+			"target": "court",
+			"condition": {
+				"previous": null,
+				"current": ".*法院$"
+			}
+		},
+		{
+			"source": "court",
+			"target": "verdict",
+			"condition": {
+				"previous": null,
+				"current": ".*判 决 书"
+			}
+		}
+	]
+}

@@ -1,13 +1,15 @@
 package com.linewx.parser;
 
+import com.google.gson.Gson;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by luganlin on 11/16/16.
@@ -20,7 +22,7 @@ public class ParserTest {
         Matcher matcher = pattern.matcher(content);
         boolean isMatched = matcher.matches();
         System.out.println("Is it a Match?" + isMatched);*/
-        long startTime = System.currentTimeMillis();
+        /*long startTime = System.currentTimeMillis();
         for (int i=0; i<1000; i++) {
             File file = new File("C:\\Users\\lugan\\git\\law\\sourcefile\\test.html");
             Document doc = Jsoup.parse(file, "GBK");
@@ -40,8 +42,20 @@ public class ParserTest {
         }
 
         long endTime = System.currentTimeMillis();
-        System.out.println(endTime - startTime);
+        System.out.println(endTime - startTime);*/
 
 
+        new ParserTest().readFile();
+    }
+
+
+    public void readFile() throws IOException{
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream("rule.json");
+        Gson gson = new Gson();
+        BufferedReader bufferedReader =new BufferedReader(
+                new InputStreamReader(is));
+        Rule one = gson.fromJson(bufferedReader, Rule.class);
+        System.out.println(one.test);
     }
 }

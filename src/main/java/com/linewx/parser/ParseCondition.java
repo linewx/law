@@ -5,8 +5,8 @@ import java.util.regex.*;
  * Created by luganlin on 11/16/16.
  */
 public class ParseCondition {
-    Pattern preStatePattern;
-    Pattern curStatePattern;
+   private Pattern preStatePattern;
+   private Pattern curStatePattern;
 
     public ParseCondition(String preStatePattern, String curStatePattern) {
         if (preStatePattern == null) {

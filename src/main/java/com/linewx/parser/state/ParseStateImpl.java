@@ -1,19 +1,91 @@
 package com.linewx.parser.state;
 
+import com.linewx.parser.ActionHandler;
 import com.linewx.parser.ParseContext;
+import com.linewx.parser.json.ActionJson;
+import com.linewx.parser.json.StateJson;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by luganlin on 11/16/16.
  */
-public interface ParseStateImpl extends ParseState{
-    String  getState();
+public class ParseStateImpl implements ParseState{
+    private String state;
+    private ActionHandler actionHandler;
 
-    void onEntry(ParseContext context);
+    private List<ActionJson> onEntryActions;
+    private List<ActionJson> onStayActions;
+    private List<ActionJson> onExitActions;
+    private List<ActionJson> onEntryLineAction;
+    private List<ActionJson> onExitLineAction;
 
-    void onExit(ParseContext context);
+    public ParseStateImpl(StateJson state, ActionHandler actionHandler) {
+        this.state = state.getId();
+        this.actionHandler = actionHandler;
 
-    void onStay(ParseContext context);
+        this.onEntryActions = state.getOnEntry() != null ?  state.getOnEntry() : new LinkedList<>();
+        this.onStayActions =  state.getOnStay() != null ?  state.getOnStay() : new LinkedList<>();
+        this.onExitActions =  state.getOnExit() != null ?  state.getOnExit() : new LinkedList<>();
+        this.onEntryLineAction =  state.getOnEntryLine() != null ?  state.getOnEntryLine() : new LinkedList<>();
+        this.onExitActions =  state.getOnExitLine() != null ?  state.getOnExitLine() : new LinkedList<>();
+        this.onExitLineAction =  state.getOnExitLine() != null ?  state.getOnExitLine() : new LinkedList<>();
+    }
 
-    String transform(ParseContext context);
+    @Override
+    public String getState() {
+        return state;
+    }
 
+    @Override
+    public void onEntry(ParseContext context) {
+        this.onEntryActions.forEach(action ->
+            actionHandler.execute(context, action.getAction(), action.getParameters())
+        );
+
+        this.onEntryLine(context);
+    }
+
+    @Override
+    public void onExit(ParseContext context) {
+        this.onExitLine(context);
+
+        this.onExitActions.forEach(action ->
+                actionHandler.execute(context, action.getAction(), action.getParameters())
+        );
+
+    }
+
+    @Override
+    public void onStay(ParseContext context) {
+        this.onEntryLine(context);
+
+        this.onStayActions.forEach(action ->
+                actionHandler.execute(context, action.getAction(), action.getParameters())
+        );
+
+        this.onExitLine(context);
+
+
+    }
+
+    @Override
+    public void onEntryLine(ParseContext context) {
+        this.onEntryLineAction.forEach(action ->
+                actionHandler.execute(context, action.getAction(), action.getParameters())
+        );
+    }
+
+    @Override
+    public void onExitLine(ParseContext context) {
+        this.onExitLineAction.forEach(action ->
+                actionHandler.execute(context, action.getAction(), action.getParameters())
+        );
+    }
+
+    @Override
+    public String transform(ParseContext context) {
+        return null;
+    }
 }

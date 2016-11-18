@@ -6,8 +6,8 @@ import java.util.List;
  * Created by luganlin on 11/17/16.
  */
 public class ActionJson {
-    String action;
-    List<String> parameters;
+    private String action;
+    private List<String> parameters;
 
     public String getAction() {
         return action;

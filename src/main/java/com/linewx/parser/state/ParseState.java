@@ -14,6 +14,10 @@ public interface ParseState {
 
     void onStay(ParseContext context);
 
+    void onEntryLine(ParseContext context);
+
+    void onExitLine(ParseContext context);
+
     String transform(ParseContext context);
 
 }

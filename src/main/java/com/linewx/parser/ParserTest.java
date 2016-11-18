@@ -16,15 +16,9 @@ import java.util.concurrent.ExecutionException;
  * Created by luganlin on 11/16/16.
  */
 public class ParserTest {
-    public static void main(String argv[]) throws Exception{
-/*        String content = "中级人民法院";
-        String patternString = ".*法院$";
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(content);
-        boolean isMatched = matcher.matches();
-        System.out.println("Is it a Match?" + isMatched);*/
-        /*long startTime = System.currentTimeMillis();
-        for (int i=0; i<1000; i++) {
+    public static void main(String argv[]) throws Exception {
+        long startTime = System.currentTimeMillis();
+        for (int i=0; i<1; i++) {
             File file = new File("C:\\Users\\lugan\\git\\law\\sourcefile\\test.html");
             Document doc = Jsoup.parse(file, "GBK");
             Element element = doc.getElementById("DivContent");
@@ -35,28 +29,30 @@ public class ParserTest {
             }
             ParseContext context = new ParseContext();
             context.setCurrentState("start");
-            ParseStateMachine stateMachine = new ParseStateMachine();
-            stateMachine.parse(context,statements);
+                RuleJson rule = new ParserTest().readFile();
+        ParseStateMachine stateMachine = new ParseStateMachine(rule);
+            stateMachine.run(context,statements);
             //System.out.println(context.getCurrentState());
             //System.out.println(context.getCourt());
+            //System.out.println(String.join("\n", context.getResults().get("court")));
+            context.printResult();
             file.exists();
         }
 
         long endTime = System.currentTimeMillis();
-        System.out.println(endTime - startTime);*/
+        System.out.println(endTime - startTime);
 
 
-        new ParserTest().readFile();
     }
 
 
-    public void readFile() throws IOException{
+    public RuleJson readFile() throws IOException {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream is = classloader.getResourceAsStream("rule.json");
         Gson gson = new Gson();
-        BufferedReader bufferedReader =new BufferedReader(
+        BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(is));
         RuleJson rule = gson.fromJson(bufferedReader, RuleJson.class);
-        System.out.println(rule.getStates());
+        return rule;
     }
 }

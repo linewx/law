@@ -1,36 +1,91 @@
 {
 	"firstState": "start",
-
 	"states": [
 		{
 			"id": "start"
 		},
 		{
 			"id": "court",
-			"onEntry": {
-				"action": "setField",
-				"parameters": ["court", "${context}"]
-			},
-			"onStay": {
-				"action": "setField",
-				"parameters": ["court", "${context}"]
-			},
-			"onExit": {
-				"action": "setField",
-				"parameters": ["court", "${context}"]
-			}
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"court",
+						"cur",
+						"(.*)"
+					]
+				}
+			]
+
 		},
 		{
-			"id": "verdict"
+			"id": "verdict",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"verdict",
+						"cur",
+						"(.*)"
+					]
+				}
+			]
 		},
 		{
-			"id": "number"
+			"id": "number",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"number",
+						"cur",
+						"(.*)"
+					]
+				}
+			]
 		},
 		{
-			"id": "accuser"
+			"id": "accuser",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"accuser",
+						"cur",
+						"^原告([\u4e00-\u9fa5]*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"accuseragent",
+						"cur",
+						"^委托代理人([\u4e00-\u9fa5]*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"accuseragentaddress",
+						"cur",
+						"([\u4e00-\u9fa5]*)律师。"
+					]
+				}
+			]
+
 		},
 		{
-			"id": "defendant"
+			"id": "defendant",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"defendant",
+						"cur",
+						"^被告([\u4e00-\u9fa5]*)"
+					]
+				}
+			]
 		},
 		{
 			"id": "content"
@@ -51,7 +106,7 @@
 			"id": "attached"
 		}
 	],
-	"transitions" : [
+	"transitions": [
 		{
 			"source": "start",
 			"target": "court",
@@ -64,8 +119,80 @@
 			"source": "court",
 			"target": "verdict",
 			"condition": {
-				"previous": null,
+				"previous": ".*法院$",
 				"current": ".*判 决 书"
+			}
+		},
+		{
+			"source": "verdict",
+			"target": "number",
+			"condition": {
+				"previous": ".*判 决 书$",
+				"current": ".*号$"
+			}
+		},
+		{
+			"source": "number",
+			"target": "accuser",
+			"condition": {
+				"previous": null,
+				"current":  "^[原告|委托搭理人].*"
+			}
+		},
+		{
+			"source": "accuser",
+			"target": "defendant",
+			"condition": {
+				"previous": null,
+				"current":  "^被告.*"
+			}
+		},
+		{
+			"source": "defendant",
+			"target": "content",
+			"condition": {
+				"previous": null,
+				"current":  "^原告.*"
+			}
+		},
+		{
+			"source": "content",
+			"target": "judge",
+			"condition": {
+				"previous": null,
+				"current":  "^审\\　判\\　长.*"
+			}
+		},
+		{
+			"source": "judge",
+			"target": "juror",
+			"condition": {
+				"previous": null,
+				"current":  "^人民陪审员.*"
+			}
+		},
+		{
+			"source": "juror",
+			"target": "date",
+			"condition": {
+				"previous": null,
+				"current":  "^二.*"
+			}
+		},
+		{
+			"source": "date",
+			"target": "clerk",
+			"condition": {
+				"previous": null,
+				"current":  "^书　记　员.*"
+			}
+		},
+		{
+			"source": "clerk",
+			"target": "attached",
+			"condition": {
+				"previous": null,
+				"current":  "^附.*"
 			}
 		}
 	]

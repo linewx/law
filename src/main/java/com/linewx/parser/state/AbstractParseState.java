@@ -30,6 +30,16 @@ public abstract class AbstractParseState implements ParseState{
     }
 
     @Override
+    public void onEntryLine(ParseContext context) {
+
+    }
+
+    @Override
+    public void onExitLine(ParseContext context) {
+
+    }
+
+    @Override
     public String transform(ParseContext context) {
         for (Map.Entry<String, ParseCondition> condition : conditions.entrySet()) {
             if (condition.getValue().match(context)) {

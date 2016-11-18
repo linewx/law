@@ -1,7 +1,6 @@
 package com.linewx.parser;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by luganlin on 11/16/16.
@@ -22,7 +21,10 @@ public class ParseContext {
     private StringBuffer content = new StringBuffer();
     private StringBuffer attached = new StringBuffer();
 
+
     //parse state
+    private Map<String, List<String>> results = new HashMap<>();
+    private Map<String, List<String>> stateResults = new HashMap<>();
     private String currentState;
     private String currentStatement;
     private String preStatement;
@@ -195,5 +197,41 @@ public class ParseContext {
 
     public void clearTempContent() {
         this.tempContent.setLength(0);
+    }
+
+    public Map<String, List<String>> getResults() {
+        return results;
+    }
+
+    public void setResults(Map<String, List<String>> results) {
+        this.results = results;
+    }
+
+    public Map<String, List<String>> getStateResults() {
+        return stateResults;
+    }
+
+    public void setStateResults(Map<String, List<String>> stateResults) {
+        this.stateResults = stateResults;
+    }
+
+    public void addResult(String key, String value) {
+        if (!results.containsKey(key)) {
+            results.put(key, new ArrayList<>());
+        }
+        results.get(key).add(value);
+    }
+
+    public void addStateResult(String key, String value) {
+        if (!stateResults.containsKey(key)) {
+            stateResults.put(key, new ArrayList<>());
+        }
+        stateResults.get(key).add(value);
+    }
+
+    public void printResult() {
+        for(Map.Entry<String, List<String>> oneResult: this.results.entrySet()) {
+            System.out.println(oneResult.getKey() + ":" + String.join("|", oneResult.getValue()));
+        }
     }
 }

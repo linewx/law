@@ -88,22 +88,82 @@
 			]
 		},
 		{
-			"id": "content"
+			"id": "content",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"content",
+						"cur",
+						"(.*)"
+					]
+				}
+			]
 		},
 		{
-			"id": "judge"
+			"id": "judge",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"judge",
+						"cur",
+						"^审　判　长　　([\u4e00-\u9fa5]*)"
+					]
+				}
+			]
 		},
 		{
-			"id": "juror"
+			"id": "juror",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"judge",
+						"cur",
+						"^人民陪审员　　([\u4e00-\u9fa5|　]*)"
+					]
+				}
+			]
 		},
 		{
-			"id": "date"
+			"id": "date",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"date",
+						"cur",
+						"(.*)"
+					]
+				}
+			]
 		},
 		{
-			"id": "clerk"
+			"id": "clerk",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"clerk",
+						"cur",
+						"^书　记　员　　([\u4e00-\u9fa5|　]*)"
+					]
+				}
+			]
 		},
 		{
-			"id": "attached"
+			"id": "attached",
+			"onEntryLine": [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"attached",
+						"cur",
+						"(.*)"
+					]
+				}
+			]
 		}
 	],
 	"transitions": [

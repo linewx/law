@@ -121,7 +121,7 @@
 				{
 					"action": "setFieldWithReg",
 					"parameters": [
-						"judge",
+						"juror",
 						"cur",
 						"^人民陪审员　　([\u4e00-\u9fa5|　]*)",
 						"",

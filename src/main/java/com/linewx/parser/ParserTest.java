@@ -10,7 +10,7 @@ import org.jsoup.select.Elements;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 /**
  * Created by luganlin on 11/16/16.
@@ -18,30 +18,58 @@ import java.util.concurrent.ExecutionException;
 public class ParserTest {
     public static void main(String argv[]) throws Exception {
         long startTime = System.currentTimeMillis();
-        for (int i=0; i<1; i++) {
-            File file = new File("C:\\Users\\lugan\\git\\law\\sourcefile\\test.html");
-            Document doc = Jsoup.parse(file, "GBK");
-            Element element = doc.getElementById("DivContent");
-            Elements elements = element.children();
-            List<String> statements = new ArrayList<>();
-            for(Element oneElement : elements) {
-                statements.add(oneElement.ownText());
-            }
-            ParseContext context = new ParseContext();
-            context.setCurrentState("start");
-                RuleJson rule = new ParserTest().readFile();
-        ParseStateMachine stateMachine = new ParseStateMachine(rule);
-            stateMachine.run(context,statements);
-            //System.out.println(context.getCurrentState());
-            //System.out.println(context.getCourt());
-            //System.out.println(String.join("\n", context.getResults().get("court")));
-            context.printResult();
-            file.exists();
+
+        final RuleJson rule = new ParserTest().readFile();
+
+
+        ExecutorService executor = Executors.newFixedThreadPool(8);
+        File dir = new File("/users/luganlin/Documents/download");
+
+        List<Future> futures = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            Future<ParseContext> future = executor.submit(new Callable<ParseContext>() {
+                @Override
+                public ParseContext call() throws Exception {
+                    long oneStartTime = System.currentTimeMillis();
+                    //File file = new File("/users/luganlin/Documents/download/test.html");
+
+                    Document doc = Jsoup.parse(file, "GBK");
+                    Element element = doc.getElementById("DivContent");
+                    Elements elements = element.children();
+                    List<String> statements = new ArrayList<>();
+                    for (Element oneElement : elements) {
+                        statements.add(oneElement.ownText());
+                    }
+                    ParseContext context = new ParseContext();
+                    context.setCurrentState("start");
+                    ParseStateMachine stateMachine = new ParseStateMachine(rule);
+                    stateMachine.run(context, statements);
+                    //System.out.println(context.getCurrentState());
+                    //System.out.println(context.getCourt());
+                    //System.out.println(String.join("\n", context.getResults().get("court")));
+                    //context.printResult();
+                    file.exists();
+                    long oneEndTime = System.currentTimeMillis();
+                    //System.out.println(oneEndTime - oneStartTime);
+                    return context;
+
+                }
+            });
+
+            futures.add(future);
         }
+
+        List<String> result = new ArrayList<>();
+        for (Future future: futures) {
+            result.add(((ParseContext)future.get()).getCurrentState());
+        }
+
 
         long endTime = System.currentTimeMillis();
         System.out.println(endTime - startTime);
-
+        System.out.println(String.join("|", result));
+        System.out.println(result.size());
+        executor.shutdown();
 
     }
 

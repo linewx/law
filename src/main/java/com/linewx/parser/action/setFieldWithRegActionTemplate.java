@@ -1,6 +1,7 @@
 package com.linewx.parser.action;
 
 import com.linewx.parser.ParseContext;
+import com.linewx.parser.ProcessorHandler;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,7 +14,7 @@ public class setFieldWithRegActionTemplate implements ActionTemplate{
     public void execute(ParseContext context, List<String> parameters) {
         if(parameters != null) {
             int length = parameters.size();
-            if (length == 3) {
+            if (length >= 3) {
                 String field = parameters.get(0);
                 String statementContext = parameters.get(1);
                 String condition = parameters.get(2);
@@ -25,10 +26,21 @@ public class setFieldWithRegActionTemplate implements ActionTemplate{
                 }else if(statementContext.equals("cur")) {
                     statement = context.getCurrentStatement();
                 }
+
+                if (length >= 4) {
+                    String preProcessor = parameters.get(3);
+                    statement = ProcessorHandler.execute(preProcessor, statement);
+                }
+
                 Matcher matcher = pattern.matcher(statement);
 
                 if (matcher.find()) {
-                    context.addResult(field, matcher.group(1));
+                    String result = matcher.group(1);
+                    if (length >=5) {
+                        String postProcessor = parameters.get(4);
+                        result = ProcessorHandler.execute(postProcessor, result);
+                    }
+                    context.addResult(field, result);
                 }
             }
         }

@@ -26,7 +26,9 @@
 					"parameters": [
 						"verdict",
 						"cur",
-						"(.*)"
+						"(.*)",
+						"",
+						"eraseSpace"
 					]
 				}
 			]
@@ -121,7 +123,9 @@
 					"parameters": [
 						"judge",
 						"cur",
-						"^人民陪审员　　([\u4e00-\u9fa5|　]*)"
+						"^人民陪审员　　([\u4e00-\u9fa5|　]*)",
+						"",
+						"eraseSpace"
 					]
 				}
 			]

@@ -236,14 +236,42 @@ public class ParseContext {
     }
 
     public void validate() {
-        if ((!this.getCurrentState().equals("clerk"))&&(!this.getCurrentState().equals("attached"))) {
-            System.out.println("################## error ####################");
-            System.out.println(String.join("\n", this.getResults().get("rawdata")));
-            System.out.println("current state: " + this.getCurrentState());
-            System.out.println("file name: " + this.getResults().get("filename"));
-            System.out.println("origin data");
-            System.out.println("################## end error ####################");
+        validateState();
+        validateField(Arrays.asList("accuser"));
+    }
 
+    public void validateState() {
+        if ((!this.getCurrentState().equals("clerk"))&&(!this.getCurrentState().equals("attached") && !this.getCurrentState().equals("dateclerk"))) {
+            System.out.println("################## state error ####################");
+            printMessage();
+            System.out.println("################## end state error ####################");
         }
+    }
+
+    public void validateField(List<String>  fields) {
+        List<String> missingFields = new ArrayList<>();
+        for(String field: fields) {
+            if (!this.getResults().containsKey(field) || this.getResults().get(field).isEmpty())  {
+                missingFields.add(field);
+            }
+        }
+
+        if (!missingFields.isEmpty()) {
+            System.out.println("################## missing field error ####################");
+
+            printMessage();
+            System.out.print("missing fields");
+            System.out.println(missingFields);
+            System.out.println("################## end missing field error ####################");
+        }
+    }
+
+    public void printMessage() {
+
+        System.out.println(String.join("\n", this.getResults().get("rawdata")));
+        System.out.println("current state: " + this.getCurrentState());
+        System.out.println("file name: " + this.getResults().get("filename"));
+        System.out.println("origin data");
+
     }
 }

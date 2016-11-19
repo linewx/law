@@ -11,46 +11,69 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by luganlin on 11/16/16.
  */
 public class ParserTest {
     public static void main(String argv[]) throws Exception {
-        long startTime = System.currentTimeMillis();
+       /* System.out.println(testRe());
+        return;*/
 
         final RuleJson rule = new ParserTest().readFile();
+        //testRe();
+        parseFiles(rule, "/users/luganlin/Documents/download");
+        //parseFile(rule, "/users/luganlin/Documents/download/ffa18ca2-dac2-4034-80b9-fa30e7d4872c.html").validate();
 
 
+    }
+
+    public static ParseContext parseFile (RuleJson rule, String fileName) throws Exception{
+        File file = new File(fileName);
+        Document doc = Jsoup.parse(file, "GBK");
+        Element element = doc.getElementById("DivContent");
+        Elements elements = element.children();
+        List<String> statements = new ArrayList<>();
+        ParseContext context = new ParseContext();
+        for (Element oneElement : elements) {
+            statements.add(oneElement.ownText());
+            context.addResult("rawdata", oneElement.ownText());
+        }
+
+        context.setCurrentState("start");
+        ParseStateMachine stateMachine = new ParseStateMachine(rule);
+        stateMachine.run(context, statements);
+        file.exists();
+        return context;
+    }
+
+    public static void parseFiles(RuleJson rule, String folder) throws Exception{
         ExecutorService executor = Executors.newFixedThreadPool(8);
-        File dir = new File("/users/luganlin/Documents/download");
+        File dir = new File(folder);
 
         List<Future> futures = new ArrayList<>();
         for (File file : dir.listFiles()) {
             Future<ParseContext> future = executor.submit(new Callable<ParseContext>() {
                 @Override
                 public ParseContext call() throws Exception {
-                    long oneStartTime = System.currentTimeMillis();
-                    //File file = new File("/users/luganlin/Documents/download/test.html");
 
                     Document doc = Jsoup.parse(file, "GBK");
                     Element element = doc.getElementById("DivContent");
                     Elements elements = element.children();
                     List<String> statements = new ArrayList<>();
+                    ParseContext context = new ParseContext();
+                    context.addResult("filename", file.getName());
                     for (Element oneElement : elements) {
                         statements.add(oneElement.ownText());
+                        context.addResult("rawdata", oneElement.ownText());
                     }
-                    ParseContext context = new ParseContext();
+
                     context.setCurrentState("start");
                     ParseStateMachine stateMachine = new ParseStateMachine(rule);
                     stateMachine.run(context, statements);
-                    //System.out.println(context.getCurrentState());
-                    //System.out.println(context.getCourt());
-                    //System.out.println(String.join("\n", context.getResults().get("court")));
-                    //context.printResult();
                     file.exists();
-                    long oneEndTime = System.currentTimeMillis();
-                    //System.out.println(oneEndTime - oneStartTime);
                     return context;
 
                 }
@@ -59,18 +82,13 @@ public class ParserTest {
             futures.add(future);
         }
 
-        List<String> result = new ArrayList<>();
         for (Future future: futures) {
-            result.add(((ParseContext)future.get()).getCurrentState());
+            ((ParseContext)future.get()).validate();
         }
 
 
         long endTime = System.currentTimeMillis();
-        System.out.println(endTime - startTime);
-        System.out.println(String.join("|", result));
-        System.out.println(result.size());
         executor.shutdown();
-
     }
 
 
@@ -82,5 +100,13 @@ public class ParserTest {
                 new InputStreamReader(is));
         RuleJson rule = gson.fromJson(bufferedReader, RuleJson.class);
         return rule;
+    }
+
+    static void testRe() {
+        Pattern pattern = Pattern.compile("^(?!审　判　长|审判员).*");
+
+        Matcher matcher = pattern.matcher("审判员sdfsdf");
+        System.out.println(matcher.matches());
+        //System.out.println(matcher.group(1));
     }
 }

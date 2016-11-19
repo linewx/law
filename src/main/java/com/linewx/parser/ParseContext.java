@@ -234,4 +234,16 @@ public class ParseContext {
             System.out.println(oneResult.getKey() + ":" + String.join("|", oneResult.getValue()));
         }
     }
+
+    public void validate() {
+        if ((!this.getCurrentState().equals("clerk"))&&(!this.getCurrentState().equals("attached"))) {
+            System.out.println("################## error ####################");
+            System.out.println(String.join("\n", this.getResults().get("rawdata")));
+            System.out.println("current state: " + this.getCurrentState());
+            System.out.println("file name: " + this.getResults().get("filename"));
+            System.out.println("origin data");
+            System.out.println("################## end error ####################");
+
+        }
+    }
 }

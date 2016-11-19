@@ -184,15 +184,15 @@
 			"target": "verdict",
 			"condition": {
 				"previous": ".*法院$",
-				"current": ".*判 决 书"
+				"current": ".*(判 决 书|裁 定 书)$"
 			}
 		},
 		{
 			"source": "verdict",
 			"target": "number",
 			"condition": {
-				"previous": ".*判 决 书$",
-				"current": ".*号$"
+				"previous": null,
+				"current": ".*\\d*号.*$"
 			}
 		},
 		{
@@ -200,7 +200,7 @@
 			"target": "accuser",
 			"condition": {
 				"previous": null,
-				"current":  "^[原告|委托搭理人].*"
+				"current":  "^(原告|委托代理人|公诉机关|起诉人).*"
 			}
 		},
 		{
@@ -212,11 +212,19 @@
 			}
 		},
 		{
+			"source": "accuser",
+			"target": "content",
+			"condition": {
+				"previous": null,
+				"current":  "^(?!被告|辩护).*"
+			}
+		},
+		{
 			"source": "defendant",
 			"target": "content",
 			"condition": {
 				"previous": null,
-				"current":  "^原告.*"
+				"current":  "^(?!被告|辩护).*"
 			}
 		},
 		{
@@ -224,7 +232,15 @@
 			"target": "judge",
 			"condition": {
 				"previous": null,
-				"current":  "^审\\　判\\　长.*"
+				"current":  "^(审　判　长|审判长|审　 判　 长|审判员|审　判　员|审 判 员|代理审判员|审 判 员|审\\?判\\?长).*"
+			}
+		},
+		{
+			"source": "content",
+			"target": "juror",
+			"condition": {
+				"previous": null,
+				"current":  "^人民陪审员.*"
 			}
 		},
 		{
@@ -233,6 +249,14 @@
 			"condition": {
 				"previous": null,
 				"current":  "^人民陪审员.*"
+			}
+		},
+		{
+			"source": "judge",
+			"target": "date",
+			"condition": {
+				"previous": null,
+				"current":  "^二.*"
 			}
 		},
 		{
@@ -248,7 +272,7 @@
 			"target": "clerk",
 			"condition": {
 				"previous": null,
-				"current":  "^书　记　员.*"
+				"current":  "^(书　记　员|书记员|书 记 员|见习书记员|代书记员|（代）书记员|代理书记员|代书　记员).*"
 			}
 		},
 		{

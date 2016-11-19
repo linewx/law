@@ -5,4 +5,5 @@ package com.linewx.parser.Processor;
  */
 public interface Processor {
     String transform(String source);
+    String getName();
 }

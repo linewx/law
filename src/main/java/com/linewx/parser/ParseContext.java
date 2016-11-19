@@ -237,7 +237,8 @@ public class ParseContext {
 
     public void validate() {
         validateState();
-        validateField(Arrays.asList("accuser"));
+        validateLevel();
+        //validateField(Arrays.asList("accuser", "level"));
     }
 
     public void validateState() {
@@ -245,6 +246,17 @@ public class ParseContext {
             System.out.println("################## state error ####################");
             printMessage();
             System.out.println("################## end state error ####################");
+        }
+    }
+
+    public void validateLevel() {
+        List<String> level = this.getResults().get("level");
+        if (level == null || level.size()!=1 || (!level.get(0).equals("1") && !level.get(0).equals("2"))){
+            System.out.println("################## level error ####################");
+            printMessage();
+            System.out.print("level:");
+            System.out.println(level);
+            System.out.println("################## end level error ####################");
         }
     }
 

@@ -1,6 +1,7 @@
 package com.linewx.parser;
 
 import com.linewx.parser.Processor.EraseSpaceProcessor;
+import com.linewx.parser.Processor.LevelProcessor;
 import com.linewx.parser.Processor.Processor;
 import com.linewx.parser.action.ActionTemplate;
 import com.linewx.parser.action.setFieldActionTemplate;
@@ -18,6 +19,7 @@ public class ProcessorHandler {
 
     static {
         processors.put("eraseSpace", new EraseSpaceProcessor());
+        processors.put("level", new LevelProcessor());
     }
 
     public static String execute(String processor, String source) {

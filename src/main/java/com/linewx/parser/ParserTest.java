@@ -26,7 +26,7 @@ public class ParserTest {
         //testRe();
         parseFiles(rule, "/users/luganlin/Documents/download");
         //parseFilesSync(rule, "/users/luganlin/Documents/download");
-        //parseFile(rule, "/users/luganlin/Documents/download/ffa18ca2-dac2-4034-80b9-fa30e7d4872c.html").validate();
+        //parseFile(rule, "/users/luganlin/Documents/download/e83a22e5-bbc8-4ba7-aa14-9538400b1321.html").validate();
 
 
     }
@@ -114,7 +114,17 @@ public class ParserTest {
 
         Matcher matcher = pattern.matcher("审判员日");
         System.out.println(matcher.matches());
-        //System.out.println(matcher.group(1));
+
+
+        //match prefix
+        //（2015）宁民申177号, （2015）宁民申字第177号，匹配申
+        Pattern prefixPattern = Pattern.compile(".*([\u4e00-\u9fa5])(字第)\\d.*");
+        Matcher prefixMatcher = prefixPattern.matcher("（2015）宁民申177号");
+        if(prefixMatcher.find()) {
+            System.out.println(prefixMatcher.group(1));
+        }
+
+
     }
 
     public static void parseFilesSync(RuleJson rule, String folder) throws Exception{

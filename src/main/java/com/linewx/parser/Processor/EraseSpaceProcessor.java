@@ -8,4 +8,9 @@ public class EraseSpaceProcessor implements Processor {
     public String transform(String source) {
         return source.replaceAll("[　| ]", "");
     }
+
+    @Override
+    public String getName() {
+        return "eraseSpace";
+    }
 }

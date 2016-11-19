@@ -43,6 +43,16 @@
 						"cur",
 						"(.*)"
 					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"level",
+						"cur",
+						".*([初|终|监|申|抗|再|提]).*",
+						null,
+						"level"
+					]
 				}
 			]
 		},
@@ -54,7 +64,7 @@
 					"parameters": [
 						"accuser",
 						"cur",
-						"^原告([\u4e00-\u9fa5]*)"
+						"^(?:原告|公诉机关|起诉人)([\u4e00-\u9fa5]*)"
 					]
 				},
 				{
@@ -204,6 +214,14 @@
 			"condition": {
 				"previous": null,
 				"current":  "^(原告|委托代理人|公诉机关|起诉人).*"
+			}
+		},
+		{
+			"source": "number",
+			"target": "defendant",
+			"condition": {
+				"previous": null,
+				"current":  "^被告.*"
 			}
 		},
 		{

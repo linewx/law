@@ -25,6 +25,7 @@ public class ParserTest {
         final RuleJson rule = new ParserTest().readFile();
         //testRe();
         parseFiles(rule, "/users/luganlin/Documents/download");
+        //parseFilesSync(rule, "/users/luganlin/Documents/download");
         //parseFile(rule, "/users/luganlin/Documents/download/ffa18ca2-dac2-4034-80b9-fa30e7d4872c.html").validate();
 
 
@@ -49,6 +50,7 @@ public class ParserTest {
         return context;
     }
 
+
     public static void parseFiles(RuleJson rule, String folder) throws Exception{
         ExecutorService executor = Executors.newFixedThreadPool(8);
         File dir = new File(folder);
@@ -57,25 +59,30 @@ public class ParserTest {
         for (File file : dir.listFiles()) {
             Future<ParseContext> future = executor.submit(new Callable<ParseContext>() {
                 @Override
-                public ParseContext call() throws Exception {
-
-                    Document doc = Jsoup.parse(file, "GBK");
-                    Element element = doc.getElementById("DivContent");
-                    Elements elements = element.children();
-                    List<String> statements = new ArrayList<>();
+                public ParseContext call() {
                     ParseContext context = new ParseContext();
-                    context.addResult("filename", file.getName());
-                    for (Element oneElement : elements) {
-                        statements.add(oneElement.ownText());
-                        context.addResult("rawdata", oneElement.ownText());
+                    try {
+                        Document doc = Jsoup.parse(file, "GBK");
+                        Element element = doc.getElementById("DivContent");
+                        Elements elements = element.children();
+                        List<String> statements = new ArrayList<>();
+
+                        context.addResult("filename", file.getName());
+                        for (Element oneElement : elements) {
+                            statements.add(oneElement.ownText());
+                            context.addResult("rawdata", oneElement.ownText());
+                        }
+
+                        context.setCurrentState("start");
+                        ParseStateMachine stateMachine = new ParseStateMachine(rule);
+                        stateMachine.run(context, statements);
+                        //file.exists();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                    context.setCurrentState("start");
-                    ParseStateMachine stateMachine = new ParseStateMachine(rule);
-                    stateMachine.run(context, statements);
-                    file.exists();
                     return context;
-
                 }
             });
 
@@ -103,10 +110,42 @@ public class ParserTest {
     }
 
     static void testRe() {
-        Pattern pattern = Pattern.compile("^(?!审　判　长|审判员).*");
+        Pattern pattern = Pattern.compile(".*(?<!日|二)$");
 
-        Matcher matcher = pattern.matcher("审判员sdfsdf");
+        Matcher matcher = pattern.matcher("审判员日");
         System.out.println(matcher.matches());
         //System.out.println(matcher.group(1));
+    }
+
+    public static void parseFilesSync(RuleJson rule, String folder) throws Exception{
+
+        File dir = new File(folder);
+
+        List<Future> futures = new ArrayList<>();
+        for (File file : dir.listFiles()) {
+            ParseContext context = new ParseContext();
+            try {
+                Document doc = Jsoup.parse(file, "GBK");
+                System.out.println(file.getName());
+                Element element = doc.getElementById("DivContent");
+                Elements elements = element.children();
+                List<String> statements = new ArrayList<>();
+
+                context.addResult("filename", file.getName());
+                for (Element oneElement : elements) {
+                    statements.add(oneElement.ownText());
+                    context.addResult("rawdata", oneElement.ownText());
+                }
+
+                context.setCurrentState("start");
+                ParseStateMachine stateMachine = new ParseStateMachine(rule);
+                stateMachine.run(context, statements);
+                //file.exists();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

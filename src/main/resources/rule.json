@@ -144,6 +144,9 @@
 			]
 		},
 		{
+			"id": "dateclerk"
+		},
+		{
 			"id": "clerk",
 			"onEntryLine": [
 				{
@@ -256,7 +259,7 @@
 			"target": "date",
 			"condition": {
 				"previous": null,
-				"current":  "^二.*"
+				"current":  "^二.*日$"
 			}
 		},
 		{
@@ -264,15 +267,32 @@
 			"target": "date",
 			"condition": {
 				"previous": null,
-				"current":  "^二.*"
+				"current":  "^二.*日$"
 			}
 		},
+		{
+			"source": "judge",
+			"target": "dateclerk",
+			"condition": {
+				"previous": null,
+				"current":  "二.*(?<!日|一|二|三|四|五|六|八|九|〇)$"
+			}
+		},
+
 		{
 			"source": "date",
 			"target": "clerk",
 			"condition": {
 				"previous": null,
 				"current":  "^(书　记　员|书记员|书 记 员|见习书记员|代书记员|（代）书记员|代理书记员|代书　记员).*"
+			}
+		},
+		{
+			"source": "dateclerk",
+			"target": "attached",
+			"condition": {
+				"previous": null,
+				"current":  "^附.*"
 			}
 		},
 		{

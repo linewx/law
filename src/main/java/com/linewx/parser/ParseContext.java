@@ -230,19 +230,29 @@ public class ParseContext {
     }
 
     public void printResult() {
-        for(Map.Entry<String, List<String>> oneResult: this.results.entrySet()) {
+        for (Map.Entry<String, List<String>> oneResult : this.results.entrySet()) {
             System.out.println(oneResult.getKey() + ":" + String.join("|", oneResult.getValue()));
         }
     }
 
     public void validate() {
-        validateState();
-        validateLevel();
-        //validateField(Arrays.asList("accuser", "level"));
+        //validateState();
+        //validateLevel();
+
+        //validateField(Arrays.asList("accuserLawyer"), true);
+
+       /* List<String> level = this.getResults().get("level");
+        if (level != null && level.size()==1 && (level.get(0).equals("1") || !level.get(0).equals("2"))){
+            //only validate 初，终案号
+            validateField(Arrays.asList("number"), false);
+        }
+*/
+        printContext();
+
     }
 
     public void validateState() {
-        if ((!this.getCurrentState().equals("clerk"))&&(!this.getCurrentState().equals("attached") && !this.getCurrentState().equals("dateclerk"))) {
+        if ((!this.getCurrentState().equals("clerk")) && (!this.getCurrentState().equals("attached") && !this.getCurrentState().equals("dateclerk"))) {
             System.out.println("################## state error ####################");
             printMessage();
             System.out.println("################## end state error ####################");
@@ -251,7 +261,7 @@ public class ParseContext {
 
     public void validateLevel() {
         List<String> level = this.getResults().get("level");
-        if (level == null || level.size()!=1 || (!level.get(0).equals("1") && !level.get(0).equals("2"))){
+        if (level == null || level.size() != 1 || (!level.get(0).equals("1") && !level.get(0).equals("2"))) {
             System.out.println("################## level error ####################");
             printMessage();
             System.out.print("level:");
@@ -260,12 +270,79 @@ public class ParseContext {
         }
     }
 
-    public void validateField(List<String>  fields) {
+    public void printContext() {
+        System.out.println("############### start parse ##########");
+        System.out.println(String.join("\n", this.getResults().get("rawdata")));
+        System.out.println("------ result ------");
+        System.out.println("状态:" + this.getCurrentState());
+        System.out.println("文件名称:" + this.getResults().get("filename"));
+
+        /**
+         * status:
+         0. state -- validate
+         1. accsuer -- validated
+         2. level -- validated
+         3. court -- validated
+         4. number(案号) -- validated
+         5. instrumentType(文书类型) -- validated
+         6. caseType(案件类型) -- validateds
+         7. suiteDate(立案日期) -- validate
+         8. accuserLawyer(原告律师) =
+         */
+
+
+        for (Map.Entry<String,String> entry: NameMapping.names.entrySet()) {
+            this.printField(entry.getKey());
+        }
+
+        /*this.printField("level");
+        this.printField("court");
+        this.printField("number");
+        this.printField("instrumentType");
+        this.printField("caseType");
+        this.printField("suiteDate");
+
+        this.printField("accuser");
+        this.printField("accuserLawyer");
+        this.printField("accuserLegalEntity");
+        this.printField("accuserLawyerOffice");
+
+        this.printField("defendant");
+        this.printField("defendantLegalEntity");
+        this.printField("defendantLawyer");
+        this.printField("defendantLawyerOffice");
+
+        this.printField("date");
+        this.printField("judge");
+        this.printField("clerk");
+        this.printField("attached");*/
+
+        System.out.println("##############  end parse #############");
+    }
+
+    private void printField(String field) {
+        System.out.println(NameMapping.get(field) + ":" + this.getResults().get(field));
+    }
+
+    public void validateField(List<String> fields, Boolean print) {
         List<String> missingFields = new ArrayList<>();
-        for(String field: fields) {
-            if (!this.getResults().containsKey(field) || this.getResults().get(field).isEmpty())  {
+        if (print) {
+            System.out.println("############ field value ###########");
+        }
+        for (String field : fields) {
+            if (!this.getResults().containsKey(field) || this.getResults().get(field).isEmpty()) {
                 missingFields.add(field);
+            } else if (print) {
+                System.out.println(this.getResults().get(field));
             }
+        }
+
+        if (print) {
+            System.out.println(String.join("\n", this.getResults().get("rawdata")));
+            System.out.println("current state: " + this.getCurrentState());
+            System.out.println("file name: " + this.getResults().get("filename"));
+            System.out.println("origin data");
+            System.out.println("############ end field value ###########");
         }
 
         if (!missingFields.isEmpty()) {

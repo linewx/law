@@ -26,7 +26,7 @@ public class ParserTest {
         //testRe();
         parseFiles(rule, "/users/luganlin/Documents/download");
         //parseFilesSync(rule, "/users/luganlin/Documents/download");
-        //parseFile(rule, "/users/luganlin/Documents/download/e83a22e5-bbc8-4ba7-aa14-9538400b1321.html").validate();
+        //parseFile(rule, "/users/luganlin/Documents/download/test.html").validate();
 
 
     }
@@ -118,10 +118,16 @@ public class ParserTest {
 
         //match prefix
         //（2015）宁民申177号, （2015）宁民申字第177号，匹配申
-        Pattern prefixPattern = Pattern.compile(".*([\u4e00-\u9fa5])(字第)\\d.*");
-        Matcher prefixMatcher = prefixPattern.matcher("（2015）宁民申177号");
+        Pattern prefixPattern = Pattern.compile(".*([^字|第\\d]).*号$");
+        Matcher prefixMatcher = prefixPattern.matcher("（2015）宁民申字第177号");
         if(prefixMatcher.find()) {
             System.out.println(prefixMatcher.group(1));
+        }
+
+        Pattern testPattern = Pattern.compile(".*（(.*)）.*");
+        Matcher testMatcher = testPattern.matcher("（2015）宁民申字第177号");
+        if(testMatcher.find()) {
+            System.out.println(testMatcher.group(1));
         }
 
 

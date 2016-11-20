@@ -24,7 +24,7 @@
 				{
 					"action": "setFieldWithReg",
 					"parameters": [
-						"verdict",
+						"instrumentType",
 						"cur",
 						"(.*)",
 						"",
@@ -49,9 +49,25 @@
 					"parameters": [
 						"level",
 						"cur",
-						".*([初|终|监|申|抗|再|提]).*",
+						".*([^字|第|\\d|-]).*号.*",
 						null,
 						"level"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"caseType",
+						"cur",
+						".*([行|民|刑|商|赔|执|法|知]).*"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"suiteDate",
+						"cur",
+						".*[（|\\(](\\d*)[）|\\)].*"
 					]
 				}
 			]
@@ -70,17 +86,25 @@
 				{
 					"action": "setFieldWithReg",
 					"parameters": [
-						"accuseragent",
+						"accuserLegalEntity",
 						"cur",
-						"^委托代理人([\u4e00-\u9fa5]*)"
+						"(?:法定代理人)([\u4e00-\u9fa5]*)"
 					]
 				},
 				{
 					"action": "setFieldWithReg",
 					"parameters": [
-						"accuseragentaddress",
+						"accuserLawyer",
 						"cur",
-						"([\u4e00-\u9fa5]*)律师。"
+						"(?:委托代理人)([\u4e00-\u9fa5]*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"accuserLawyerOffice",
+						"cur",
+						"([\u4e00-\u9fa5]*事务所)律师。"
 					]
 				}
 			]
@@ -95,6 +119,30 @@
 						"defendant",
 						"cur",
 						"^被告([\u4e00-\u9fa5]*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"defendantLegalEntity",
+						"cur",
+						"(?:法定代理人|法定代表人)([\u4e00-\u9fa5]*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"defendantLawyer",
+						"cur",
+						"(?:委托代理人)([\u4e00-\u9fa5]*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"defendantLawyerOffice",
+						"cur",
+						"([\u4e00-\u9fa5]*事务所)律师。"
 					]
 				}
 			]
@@ -233,19 +281,11 @@
 			}
 		},
 		{
-			"source": "accuser",
-			"target": "content",
-			"condition": {
-				"previous": null,
-				"current":  "^(?!被告|辩护).*"
-			}
-		},
-		{
 			"source": "defendant",
 			"target": "content",
 			"condition": {
 				"previous": null,
-				"current":  "^(?!被告|辩护).*"
+				"current":  "^(?!被告|辩护|法定代表人|委托代理人).*"
 			}
 		},
 		{

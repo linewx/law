@@ -1,13 +1,18 @@
 package com.linewx.parser;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Created by luganlin on 11/19/16.
  */
 public class NameMapping {
-    private static Map<String, String> names = new HashMap<>();
+    public static Map<String, String> names = new LinkedHashMap<>();
+
+    public static String get(String field) {
+        return names.getOrDefault(field, field);
+    }
 
     static {
         /********************* 一审规则 *************************/
@@ -20,6 +25,7 @@ public class NameMapping {
         names.put("accuser", "原告");
 
 
+        names.put("accuserLegalEntity", "原告法人代表");
         /**
          * 原告栏中，“委托代理人”后面，到“，”且“，”后面包含“律师两个字”；
          * 原告律师可能出现多个，分行列明，规律同上；
@@ -39,6 +45,8 @@ public class NameMapping {
          *  4、不同被告分行显示；
          */
         names.put("defendant", "被告");
+
+        names.put("defendantLegalEntity", "被告法人代表");
 
 
         /**

@@ -8,11 +8,11 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by luganlin on 11/16/16.
@@ -22,11 +22,12 @@ public class ParserTest {
        /* System.out.println(testRe());
         return;*/
 
-        final RuleJson rule = new ParserTest().readFile();
+        final RuleJson rule = new ParserTest().readRule();
+        //loadReason();
         //testRe();
-        parseFiles(rule, "/users/luganlin/Documents/download");
+        //parseFiles(rule, "/users/luganlin/Documents/download");
         //parseFilesSync(rule, "/users/luganlin/Documents/download");
-        //parseFile(rule, "/users/luganlin/Documents/download/test.html").validate();
+        parseFile(rule, "/users/luganlin/Documents/download/ffa18ca2-dac2-4034-80b9-fa30e7d4872c.html").validate();
 
 
     }
@@ -99,7 +100,7 @@ public class ParserTest {
     }
 
 
-    public RuleJson readFile() throws IOException {
+    public RuleJson readRule() throws IOException {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream is = classloader.getResourceAsStream("rule.json");
         Gson gson = new Gson();
@@ -109,6 +110,35 @@ public class ParserTest {
         return rule;
     }
 
+    /*public static void loadReason() throws IOException {
+        Map<String, String> reasons = new HashMap<>();
+        Map<String, String> reasonIndex = new HashMap<>();
+        Map<String, String> secondaryIndex = new HashMap<>();
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream("reason.csv");
+        Gson gson = new Gson();
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(is));
+        String strLine;
+        while ((strLine = bufferedReader.readLine()) != null)   {
+            // Print the content on the console
+            String[] oneReason = strLine.split(",");
+            String number = oneReason[0].trim();
+            String name = oneReason[1].trim();
+
+            reasons.put(number, name);
+            reasonIndex.put(name, number);
+
+            for(int i=0; i<name.length(); i++) {
+                if (name.charAt(i) == '、') {
+                    secondaryIndex.put(name.substring(i+1), number);
+                }
+            }
+        }
+
+
+    }
+*/
     static void testRe() {
         Pattern pattern = Pattern.compile(".*(?<!日|二)$");
 
@@ -124,8 +154,8 @@ public class ParserTest {
             System.out.println(prefixMatcher.group(1));
         }
 
-        Pattern testPattern = Pattern.compile(".*（(.*)）.*");
-        Matcher testMatcher = testPattern.matcher("（2015）宁民申字第177号");
+        Pattern testPattern = Pattern.compile("(合同|同)aa$");
+        Matcher testMatcher = testPattern.matcher("商业合同aa");
         if(testMatcher.find()) {
             System.out.println(testMatcher.group(1));
         }

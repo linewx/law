@@ -126,7 +126,7 @@
 					"parameters": [
 						"defendantLegalEntity",
 						"cur",
-						"(?:法定代理人|法定代表人)([\u4e00-\u9fa5]*)"
+						"(?:法定代理人|法定代表人|负责人)([\u4e00-\u9fa5]*)"
 					]
 				},
 				{
@@ -149,6 +149,18 @@
 		},
 		{
 			"id": "content",
+			"onEntry" : [
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"reason",
+						"cur",
+						"(.*[纠纷|罪]).*",
+						null,
+						"reason"
+					]
+				}
+			],
 			"onEntryLine": [
 				{
 					"action": "setFieldWithReg",
@@ -156,6 +168,22 @@
 						"content",
 						"cur",
 						"(.*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"cost",
+						"cur",
+						"^(?:案件受理费)(\\d*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"discountHalf",
+						"cur",
+						"^(?:案件受理费).*(减半收取).*"
 					]
 				}
 			]
@@ -168,7 +196,9 @@
 					"parameters": [
 						"judge",
 						"cur",
-						"^审　判　长　　([\u4e00-\u9fa5]*)"
+						"^(?:审　判　长|审判长|审　 判　 长|审判员|审　判　员|审 判 员|代理审判员|审 判 员|审\\?判\\?长)(.*)",
+						null,
+						"eraseSpace"
 					]
 				}
 			]
@@ -212,7 +242,9 @@
 					"parameters": [
 						"clerk",
 						"cur",
-						"^书　记　员　　([\u4e00-\u9fa5|　]*)"
+						"^(?:书　记　员|书记员|书 记 员|见习书记员|代书记员|（代）书记员|代理书记员|代书　记员)(.*)",
+						null,
+						"eraseSpace"
 					]
 				}
 			]
@@ -261,7 +293,7 @@
 			"target": "accuser",
 			"condition": {
 				"previous": null,
-				"current":  "^(原告|委托代理人|公诉机关|起诉人).*"
+				"current":  "^(原告|委托代理人|公诉机关|起诉人|负责人).*"
 			}
 		},
 		{
@@ -285,7 +317,7 @@
 			"target": "content",
 			"condition": {
 				"previous": null,
-				"current":  "^(?!被告|辩护|法定代表人|委托代理人).*"
+				"current":  "^(?!被告|辩护|法定代表人|委托代理人|负责人).*"
 			}
 		},
 		{

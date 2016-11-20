@@ -21,8 +21,10 @@ public class ReasonProcessor implements Processor {
     private Map<String, String> reasons = new HashMap<>();
     private Map<String, String> reasonIndex = new HashMap<>();
     private Map<String, String> secondaryIndex = new HashMap<>();
+    private Map<String, Long> ignoreValues = new HashMap<>();
     private Pattern reasonPattern;
     private Pattern secondaryReasonPattern;
+
 
     public ReasonProcessor(){
         load();
@@ -54,6 +56,7 @@ public class ReasonProcessor implements Processor {
 
         return "不明案由";
     }
+
 
     public void load() {
         try {

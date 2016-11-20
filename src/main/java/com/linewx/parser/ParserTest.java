@@ -6,6 +6,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.omg.CORBA.NameValuePair;
 
 import java.io.*;
 import java.util.*;
@@ -193,5 +194,12 @@ public class ParserTest {
             }
 
         }
+    }
+
+    public static void testAmount() {
+        //Map<Long, Long> amountFormular = new HashMap<>();
+        LinkedHashMap<Long, Long> amountFormular = new LinkedHashMap<>();
+        Double a = 10000L * 0.7;
+
     }
 }

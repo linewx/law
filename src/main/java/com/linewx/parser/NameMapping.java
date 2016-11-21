@@ -260,7 +260,7 @@ public class NameMapping {
         /**
          *  1 - 本案原告胜率
          */
-        names.put("defendantWinnPer", "本案原告胜率");
+        names.put("defendantWinPer", "本案被告胜率");
 
         /**
          * 在正文中，倒数三页内，＂书记员＂往上1～2 页内，“判决如下”与“未按本判决指定的期间履行给付金钱义务”之间

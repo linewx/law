@@ -29,14 +29,14 @@ public class AmountProcessor implements Processor {
     public String transform(String source) {
         try {
             Long cost = Long.parseLong(source);
-            return caculateAmount(cost).toString();
+            return calculateAmount(cost).toString();
         }catch (Exception e) {
             return "0";
         }
 
     }
 
-    public Long caculateAmount(Long cost) {
+    public Long calculateAmount(Long cost) {
         AmountLevel lastAmountLevel = null;
         for(AmountLevel amountLevel : amountLevels) {
             if (cost < amountLevel.getCostLevel()) {

@@ -24,13 +24,10 @@ public class ParserTest {
         return;*/
 
         final RuleJson rule = new ParserTest().readRule();
-        //loadReason();
         //testRe();
-        //parseFiles(rule, "C:\\Users\\lugan\\git\\law\\sourcefile");
+        parseFiles(rule, "C:\\Users\\lugan\\git\\law\\sourcefile");
         //parseFilesSync(rule, "/users/luganlin/Documents/download");
-        parseFile(rule, "C:\\Users\\lugan\\git\\law\\sourcefile\\test.html").validate();
-
-
+        //parseFile(rule, "C:\\Users\\lugan\\git\\law\\sourcefile\\fa0fe873-91df-4814-88b9-c58852f995c5.html").validate();
     }
 
     public static ParseContext parseFile (RuleJson rule, String fileName) throws Exception{
@@ -159,6 +156,13 @@ public class ParserTest {
         Matcher testMatcher = testPattern.matcher("商业合同aa");
         if(testMatcher.find()) {
             System.out.println(testMatcher.group(1));
+        }
+
+        Pattern amountPattern = Pattern.compile("^案件受理费.*原告.*?负担(\\d*)");
+        Matcher amountMatcher = amountPattern.matcher("案件受理费1264950元，原告资产公司负担123123元，由被告化工公司负担632475元，");
+        if(amountMatcher.find()) {
+            System.out.println(amountMatcher.group(1));
+            //System.out.println(amountMatcher.group(2));
         }
 
 

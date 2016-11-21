@@ -222,6 +222,18 @@ public class ParseContext {
         results.get(key).add(value);
     }
 
+    public void updateOrAddResult(String key, String value) {
+        if (!results.containsKey(key)) {
+            results.put(key, new ArrayList<>());
+        }
+
+        if (results.get(key).size() >= 1) {
+            results.get(key).set(0, value);
+        }else {
+            results.get(key).add(value);
+        }
+    }
+
     public void addStateResult(String key, String value) {
         if (!stateResults.containsKey(key)) {
             stateResults.put(key, new ArrayList<>());
@@ -249,10 +261,102 @@ public class ParseContext {
         }
 */
         printContext();
-
     }
 
     private void calculate() {
+        calculateAmount();
+        calculateCost();
+    }
+
+    private void calculateCost() {
+        Long totalCost = 0L;
+        List<String> costs = this.getResults().get("cost");
+        if (costs != null) {
+            try {
+                totalCost = Long.parseLong(costs.get(0));
+            }catch (Exception e) {
+                totalCost = 0L;
+            }
+        }
+
+        if (totalCost == 0) {
+            //no cost
+            this.addResult("cost", "0");
+            this.addResult("costOnDefendant", "0");
+            this.addResult("costOnAccuser", "0");
+            this.addResult("accuserWinPer", "0");
+            this.addResult("defendantWinPer", "0");
+            return;
+        }
+
+        // caculate cost on accuser
+        Long costOnAccuser = null;
+        Long costOnDefendant = null;
+        List<String> costsOnAccuser = this.getResults().get("costOnAccuser");
+        if (costsOnAccuser != null && costsOnAccuser.size() == 1) {
+            //有原告信息
+            if (costsOnAccuser.get(0).isEmpty()) {
+                //全部由原告承担
+                costOnAccuser = totalCost;
+                costOnDefendant = 0L;
+            }else {
+                //部分由原告承担
+                costOnAccuser = Long.parseLong(costsOnAccuser.get(0));
+                costOnDefendant = totalCost - costOnAccuser;
+            }
+        }else {
+            //无原告信息
+            List<String> costsOnDefendant = this.getResults().get("costOnDefendant");
+            if (costsOnDefendant != null && costsOnDefendant.size() == 1) {
+                //有被告信息
+                if (costsOnDefendant.get(0).isEmpty()) {
+                    costOnDefendant = totalCost;
+                    costOnAccuser = 0L;
+                }else {
+                    costOnDefendant = Long.parseLong(costsOnDefendant.get(0));
+                    costOnAccuser = totalCost - costOnDefendant;
+                }
+            }else {
+                //无原告和被告信息
+                List<String> costUsers = this.getResults().get("costUser");
+                if (costUsers != null) {
+                    //有负担费用人信息
+                    for (String oneAccuser : this.getResults().get("accuser")) {
+                        if (costUsers.get(0).contains(oneAccuser)) {
+                            //原告人承担
+                            this.addResult("costOnAccuser", "");
+                            //recalculate cost
+                            calculateCost();
+                            return;
+                        }
+                    }
+
+                    for (String oneDefendant : this.getResults().get("defendant")) {
+                        if (costUsers.get(0).contains(oneDefendant)) {
+                            //被告人承担
+                            this.addResult("costOnDefendant", "");
+                            //re-calculate cost
+                            calculateCost();
+                            return;
+                        }
+                    }
+                    //if (this.getResults().get("accuser").contains(costUsers.get(0))
+                }
+                //System.out.println("no detail for cost");
+                //printContext();
+                return;
+            }
+        }
+
+        Long accuserWinPer = (totalCost - costOnAccuser) * 100/totalCost;
+        Long defendantWinPer = 100 - accuserWinPer;
+        this.updateOrAddResult("costOnAccuser", costOnAccuser.toString());
+        this.updateOrAddResult("costOnDefendant", costOnDefendant.toString());
+        this.addResult("accuserWinPer", accuserWinPer.toString() + "%");
+        this.addResult("defendantWinPer", defendantWinPer.toString() + "%");
+    }
+
+    private void calculateAmount() {
         try {
             List<String> costs = this.getResults().get("cost");
             if (costs == null || costs.size() != 1) {
@@ -309,29 +413,6 @@ public class ParseContext {
         for (Map.Entry<String,String> entry: NameMapping.names.entrySet()) {
             this.printField(entry.getKey());
         }
-
-        /*this.printField("level");
-        this.printField("court");
-        this.printField("number");
-        this.printField("instrumentType");
-        this.printField("caseType");
-        this.printField("suiteDate");
-
-        this.printField("accuser");
-        this.printField("accuserLawyer");
-        this.printField("accuserLegalEntity");
-        this.printField("accuserLawyerOffice");
-
-        this.printField("defendant");
-        this.printField("defendantLegalEntity");
-        this.printField("defendantLawyer");
-        this.printField("defendantLawyerOffice");
-
-        this.printField("date");
-        this.printField("judge");
-        this.printField("clerk");
-        this.printField("attached");*/
-
         System.out.println("##############  end parse #############");
     }
 
@@ -371,7 +452,6 @@ public class ParseContext {
     }
 
     public void printMessage() {
-
         System.out.println(String.join("\n", this.getResults().get("rawdata")));
         System.out.println("current state: " + this.getCurrentState());
         System.out.println("file name: " + this.getResults().get("filename"));

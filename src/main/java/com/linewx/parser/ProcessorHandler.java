@@ -20,6 +20,7 @@ public class ProcessorHandler {
         processors.put("level", new LevelProcessor());
         processors.put("reason", new ReasonProcessor());
         processors.put("amount", new AmountProcessor());
+        processors.put("date", new DateProcessor());
     }
 
     public static String execute(String processor, String source) {

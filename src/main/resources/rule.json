@@ -96,7 +96,7 @@
 					"parameters": [
 						"accuserLawyer",
 						"cur",
-						"(?:委托代理人)([\u4e00-\u9fa5]*)"
+						"(?:委托代理人|委托代表人)([\u4e00-\u9fa5]*)"
 					]
 				},
 				{
@@ -175,7 +175,7 @@
 					"parameters": [
 						"cost",
 						"cur",
-						"^(?:案件受理费)(\\d*)"
+						"^(?:案件|本案)受理费(\\d*)"
 					]
 				},
 				{
@@ -183,7 +183,31 @@
 					"parameters": [
 						"discountHalf",
 						"cur",
-						"^(?:案件受理费).*(减半收取).*"
+						"^(?:案件|本案)受理费.*(减半).*"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"costOnAccuser",
+						"cur",
+						"^(?:案件|本案)受理费.*原告.*?负担(\\d*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"costOnDefendant",
+						"cur",
+						"^(?:案件|本案)受理费.*被告.*?(?:负|承)担(\\d*)"
+					]
+				},
+				{
+					"action": "setFieldWithReg",
+					"parameters": [
+						"costUser",
+						"cur",
+						"^(?:案件|本案)受理费.*由(.*)(?:负|承)担\\d*"
 					]
 				}
 			]
@@ -226,7 +250,9 @@
 					"parameters": [
 						"date",
 						"cur",
-						"(.*)"
+						"(.*)",
+						null,
+						"date"
 					]
 				}
 			]

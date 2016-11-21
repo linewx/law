@@ -236,6 +236,7 @@ public class ParseContext {
     }
 
     public void validate() {
+        calculate();
         //validateState();
         //validateLevel();
 
@@ -248,6 +249,20 @@ public class ParseContext {
         }
 */
         printContext();
+
+    }
+
+    private void calculate() {
+        try {
+            List<String> costs = this.getResults().get("cost");
+            if (costs == null || costs.size() != 1) {
+                throw new RuntimeException("invalid cost");
+            }else {
+                this.addResult("amount", ProcessorHandler.execute("amount", costs.get(0)));
+            }
+        }catch(Exception e) {
+            this.addResult("amount", "0");
+        }
 
     }
 

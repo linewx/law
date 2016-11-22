@@ -1,12 +1,11 @@
 package com.linewx.parser.utils;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Created by luganlin on 11/22/16.
@@ -15,7 +14,7 @@ public class AmountUtil {
     private static Pattern amountPattern;
     private static Map<Character, Character> numberMapping = new HashMap<>();
     static {
-        amountPattern = Pattern.compile("([\\d|，]+)元");
+        amountPattern = Pattern.compile("([\\d|，〇|一|二|三|四|五|六|七|八|九|十|百|千|万|亿]+)元");
         numberMapping.put('〇', '0');
         numberMapping.put('一', '1');
         numberMapping.put('二', '2');
@@ -29,19 +28,32 @@ public class AmountUtil {
     }
 
     public static void main(String []argv) {
-           //parseMainAmount("原告金额:[：, 一、被告戴兴勇应于本判决发生法律效力之日起十五234，234元日内向原元告蒋继超给付工程款388206元；, 如果]");
+        Set<Long> numbers =  parseMainAmount("原告金额:[：, 一、被告戴兴勇应于本判决发生法律效三万元力之日起234，234元日内向原元告蒋继超给付工程款388206元；, 如果]");
+
+        List<Long> sortedNumbers = new ArrayList(numbers);
+        Collections.sort(sortedNumbers);
+        Collections.reverse(sortedNumbers);
+
+        List<Long> numberList = new ArrayList<>();
+        if (sortedNumbers.size() > 3) {
+            sortedNumbers.subList(0, 3);
+        }
+
+        System.out.println(sortedNumbers.stream().reduce(0L, Long::sum));
+
         //System.out.print(Arrays.asList("6亿".split("亿")));
         //String a = "6亿".split("亿");
-        System.out.println(ParseLong("二十二"));
+        //System.out.println(ParseLong("二十二"));
+        //parseMainAmount()
     }
 
-    public static Long parseMainAmount(String amountText) {
-
+    public static Set<Long> parseMainAmount(String amountText) {
+        Set<Long> numbers = new HashSet<>();
         Matcher matcher = amountPattern.matcher(amountText);
         while (matcher.find()) {
-            System.out.println(matcher.group(1));
+            numbers.add(ParseLong(matcher.group(1)));
         }
-        return null;
+        return numbers;
     }
 
     //一亿六千七百万八千六十元

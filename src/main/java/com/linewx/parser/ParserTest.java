@@ -25,7 +25,7 @@ public class ParserTest {
 
         final RuleJson rule = new ParserTest().readRule();
         //testRe();
-        parseFiles(rule, "C:\\Users\\lugan\\git\\law\\sourcefile");
+        parseFiles(rule, "/users/luganlin/Documents/download");
         //parseFilesSync(rule, "/users/luganlin/Documents/download");
         //parseFile(rule, "C:\\Users\\lugan\\git\\law\\sourcefile\\fa0fe873-91df-4814-88b9-c58852f995c5.html").validate();
     }

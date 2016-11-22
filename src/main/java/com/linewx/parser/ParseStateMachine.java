@@ -83,7 +83,6 @@ class ParseStateMachine {
                     currentState.onStay(context);
                 } else {
                     currentState.onExit(context);
-                    context.clearTempContent();
                     context.setCurrentState(nextStateName);
                     nextState.onEntry(context);
                 }

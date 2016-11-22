@@ -37,6 +37,14 @@ public class AmountProcessor implements Processor {
     }
 
     public Long calculateAmount(Long cost) {
+        if (cost == 0){
+            return 0L;
+        }
+        if (cost == 50) {
+            return 10000L;
+        }
+
+        cost = cost - 50;
         AmountLevel lastAmountLevel = null;
         for(AmountLevel amountLevel : amountLevels) {
             if (cost < amountLevel.getCostLevel()) {
@@ -91,6 +99,4 @@ public class AmountProcessor implements Processor {
             lastMountLevel = amountLevel;
         }
     }
-
-
 }

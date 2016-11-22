@@ -209,6 +209,14 @@
 						"cur",
 						"^(?:案件|本案)受理费.*由(.*)(?:负|承)担\\d*"
 					]
+				},
+				{
+					"action": "cacheMultiLines",
+					"parameters": [
+						"accuserAmountLines",
+						".*判决如下(.*)",
+						"^(.*)未按本判决指定的期间履行给付金钱义务"
+					]
 				}
 			]
 		},

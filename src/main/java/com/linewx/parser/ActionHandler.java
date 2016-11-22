@@ -1,6 +1,7 @@
 package com.linewx.parser;
 
 import com.linewx.parser.action.ActionTemplate;
+import com.linewx.parser.action.CacheMultiLinesTemplate;
 import com.linewx.parser.action.setFieldActionTemplate;
 import com.linewx.parser.action.setFieldWithRegActionTemplate;
 
@@ -17,6 +18,7 @@ public class ActionHandler {
     ActionHandler() {
         actions.put("setField", new setFieldActionTemplate());
         actions.put("setFieldWithReg", new setFieldWithRegActionTemplate());
+        actions.put("cacheMultiLines", new CacheMultiLinesTemplate());
     }
 
     public void execute(ParseContext context, String actionName, List<String> parameters) {
